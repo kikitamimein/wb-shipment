@@ -1,11 +1,18 @@
 # -*- mode: python ; coding: utf-8 -*-
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules, collect_dynamic_libs
 
 block_cipher = None
 
+# ── qt-material: themes and styles ──
 qt_material_datas = collect_data_files('qt_material')
 hidden_imports = ['pandas', 'openpyxl', 'requests', 'qt_material']
 hidden_imports += collect_submodules('qt_material')
+
+# ── PyQt6: core modules + Qt plugins (CRITICAL for Windows) ──
+hidden_imports += collect_submodules('PyQt6')
+pyqt6_datas = collect_data_files('PyQt6')
+
+# ── pandas native extensions ──
 hidden_imports += collect_submodules('pandas')
 
 a = Analysis(
@@ -17,7 +24,7 @@ a = Analysis(
         ('../calculator.py', '.'),
         ('../wb_api.py', '.'),
         ('../moysklad_api.py', '.'),
-    ] + qt_material_datas,
+    ] + qt_material_datas + pyqt6_datas,
     hiddenimports=hidden_imports,
     hookspath=[],
     hooksconfig={},
