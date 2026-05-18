@@ -1,0 +1,35 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -r service_files/requirements.txt
+          pip install pyinstaller
+
+      - name: Build EXE
+        run: |
+          mkdir build
+          copy service_files\WB_Shipment.spec build\
+          cd build
+          pyinstaller WB_Shipment.spec
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WB_Shipment
+          path: build/dist/WB_Shipment/WB_Shipment.exe
