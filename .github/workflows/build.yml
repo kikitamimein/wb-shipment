@@ -22,19 +22,15 @@ jobs:
           pip install pyinstaller
 
       - name: Build EXE
+        shell: cmd
         run: |
           mkdir build
           copy service_files\WB_Shipment.spec build\
           cd build
           pyinstaller WB_Shipment.spec
 
-      - name: List output
-        run: |
-          dir build\dist /s /b
-        continue-on-error: true
-
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
         with:
           name: WB_Shipment
-          path: build/dist/WB_Shipment/*.exe
+          path: build/dist/WB_Shipment.exe
